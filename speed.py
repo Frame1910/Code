@@ -3,16 +3,16 @@ import pyfiglet
 import csv
 import datetime
 
-
 script_version = '0.2.0'
 
 
-def performTests(iterations: int = 3) -> list[dict]:
+def performTests(iterations: int = 3) -> dict:
     print("Finding best server...")
     st = speedtest.Speedtest()
     st.get_best_server()
     print('Connected!')
-    results = []
+    downloads: list[float] = []
+    uploads: list[float] = []
     print('Performing {0} tests.'.format(iterations))
     for i in range(iterations):
         res_dict = {}
@@ -21,22 +21,26 @@ def performTests(iterations: int = 3) -> list[dict]:
         st.download()
         print("Upload...")
         st.upload()
-        res_dict["Test Number"] = i+1
-        res_dict["Time Taken"] = datetime.datetime.now()
-        res_dict["Download"] = round(st.results.download / 1000000, 2)
-        res_dict["Upload"] = round(st.results.upload / 1000000, 2)
-        results.append(res_dict)
-    return results
+        downloads.append(round(st.results.download / 1000000, 2))
+        uploads.append(round(st.results.upload / 1000000, 2))
+
+    averages = {
+        'Time Taken': datetime.datetime.now(),
+        'Download': sum(downloads) / len(downloads),
+        'Upload': sum(uploads) / len(uploads)
+    }
+    return averages
 
 
-def writeResultsToFile(results: list[dict]):
+def writeResultsToFile(results: dict):
     print('Writing to file...')
     with open('results.csv', 'w+') as csvFile:
-        fieldnames = results[0].keys()
+        fieldnames = results.keys()
         writer = csv.DictWriter(csvFile, fieldnames=fieldnames)
 
         writer.writeheader()
-        writer.writerows(results)
+        # writer.writerows(results)
+        writer.writerow(results)
 
 
 def enterNumber() -> int:
