@@ -3,13 +3,15 @@ import pyfiglet
 import csv
 import datetime
 
-script_version = '0.2.0'
 
-st = speedtest.Speedtest()
-st.get_best_server()
+script_version = '0.2.0'
 
 
 def performTests(iterations: int = 3) -> list[dict]:
+    print("Finding best server...")
+    st = speedtest.Speedtest()
+    st.get_best_server()
+    print('Connected!')
     results = []
     print('Performing {0} tests.'.format(iterations))
     for i in range(iterations):
