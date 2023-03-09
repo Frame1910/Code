@@ -2,6 +2,8 @@ import speedtest
 import pyfiglet
 import csv
 import datetime
+import os
+import sys
 
 script_version = '0.2.0'
 
@@ -67,3 +69,10 @@ number_of_tests = enterNumber()
 results = performTests(number_of_tests)
 
 writeResultsToFile(results)
+
+if sys.platform == "win32":
+    os.startfile('results.csv')
+elif sys.platform == "darwin":
+    os.system('open results.csv')
+else:
+    print("Unknown OS")
